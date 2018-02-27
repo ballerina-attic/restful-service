@@ -10,7 +10,7 @@ The following figure illustrates all the required functionalities of the OrderMg
 
 ![RESTful Service](images/restful_service.png "RESTful Service")
 
-- **Create Order** : To place a new order you can use the HTTP POST message that contains the order details, which is sent to the URL (http://xyz.retail.com/order).The response from the service contains an HTTP 201 Created message with the location header pointing to the newly created resource (http://xyz.retail.com/order/123456). 
+- **Create Order** : To place a new order you can use the HTTP POST message that contains the order details, which is sent to the URL (http://xyz.retail.com/order). The response from the service contains an HTTP 201 Created message with the location header pointing to the newly created resource (http://xyz.retail.com/order/123456). 
 - **Retrieve Order** : You can retrieve the order details by sending an HTTP GET request to the appropriate URL which includes the order ID. (e.g. http://xyz.retail.com/order/<orderId>)
 - **Update Order** : You can update an existing order by sending a HTTP PUT request with the content for the updated order. 
 - **Delete Order** : An existing order can be deleted by sending a HTTP DELETE request to the specific URL (e.g. http://xyz.retail.com/order/<orderId>). 
@@ -30,88 +30,30 @@ Optional Requirements
 
 ## <a name="developing-service"></a> Developing the RESTFul service 
 
-We can model the OrderMgt RESTful service using Ballerina services and resources constructs. 
+We can model the OrderMgt RESTful service using services and resources constructs in Ballerina language. 
 
-1. We can get started with a Ballerina service; 'OrderMgtService', which is the RESTful service that serves the order management request. OrderMgtService can have multiple resources and each resource is dedicated for a specific order management functionality.
-2. You can decide the package structure for the service and then create the service in the corresponding directory structure. For example, suppose that you are going to use the package name 'guide.restful_service', then you need to create the following directory structure and create the service file using the text editor or IDE that you use. 
+*  We can get started with a Ballerina service; 'OrderMgtService', which is the RESTful service that serves the order management request. OrderMgtService can have multiple resources and each resource is dedicated for a specific order management functionality.
+*  You can decide the package structure for the service and then create the service in the corresponding directory structure. For example, suppose that you are going to use the package name 'guide.restful_service', then you need to create the following directory structure and create the service file using the text editor or IDE that you use. 
 
-```
-restful-service
-   └── guide
-       └── restful_service
-           └── OrderMgtService.bal  
-```
-2. You can add the content to your Ballerina service as shown below. In that code segment you can find the implementation of the service and resource skeletons of 'OrderMgtService'. 
-For each order management operation, there is a dedicated resource and inside each resource we can implement the order management operation logic. 
+  ```
+  restful-service
+     └── guide
+         └── restful_service
+             └── OrderMgtService.bal  
+  ```
+  *  For each order management operation, there is a dedicated resource and inside each resource we can implement the order management operation logic. Please refer the following code for the complete implementation of the order management service. 
 
 ##### OrderMgtService.bal
-```ballerina
+  ```ballerina
 package guide.restful_service;
 
 import ballerina.net.http;
-
-@http:configuration {basePath:"/ordermgt"}
-service<http> OrderMgtService {
-
-
-    @Description {value:"Resource that handles the HTTP GET requests that are directed to a specific order using path '/orders/<orderID>'"}
-    @http:resourceConfig {
-        methods:["GET"],
-        path:"/order/{orderId}"
-    }
-    resource findOrder (http:Connection conn, http:InRequest req, string orderId) {
-        // Implementation 
-    }
-
-
-    @Description {value:"Resource that handles the HTTP POST requests that are directed to the path '/orders' to create a new Order."}
-    @http:resourceConfig {
-        methods:["POST"],
-        path:"/order"
-    }
-    resource addOrder (http:Connection conn, http:InRequest req) {
-        // Implementation 
-    }
-
-    @Description {value:"Resource that handles the HTTP PUT requests that are directed to the path '/orders' to update an existing Order."}
-    @http:resourceConfig {
-        methods:["PUT"],
-        path:"/order/{orderId}"
-    }
-    resource updateOrder (http:Connection conn, http:InRequest req, string orderId) {
-        // Implementation 
-    }
-
-    @Description {value:"Resource that handles the HTTP DELETE requests that are directed to the path '/orders/<orderId>' to delete an existing Order."}
-    @http:resourceConfig {
-        methods:["DELETE"],
-        path:"/order/{orderId}"
-    }
-    resource cancelOrder (http:Connection conn, http:InRequest req, string orderId) {
-        // Implementation    
-    }
-}
-
-
-```
-
-
-3. You can implement the business logic of each resources as per your requirements. For simplicity we have used an in-memory map to keep all the order details. You can find the full source code of the OrderMgtService below. In addition to the order processing logic, we have also manipulated some HTTP status codes and headers whenever required.  
-
-
-##### OrderMgtService.bal
-```ballerina
-package guide.restful_service;
-
-import ballerina.net.http;
-
 
 @Description {value:"RESTful service."}
 @http:configuration {basePath:"/ordermgt"}
 service<http> OrderMgtService {
 
     // Order management is done using an in memory orders map.
-    // Add some sample orders to the orderMap during the startup.
     map ordersMap = {};
 
     @Description {value:"Resource that handles the HTTP GET requests that are directed to a specific order using path '/orders/<orderID>'"}
@@ -120,15 +62,11 @@ service<http> OrderMgtService {
         path:"/order/{orderId}"
     }
     resource findOrder (http:Connection conn, http:InRequest req, string orderId) {
-        json payload;
         // Find the requested order from the map and retrieve it in JSON format.
-        payload, _ = (json)ordersMap[orderId];
+        var payload, _ = (json)ordersMap[orderId];
 
+        // Initialize the http response message
         http:OutResponse response = {};
-        if (payload == null) {
-            payload = "Order : " + orderId + " cannot be found.";
-        }
-
         // Set the JSON payload to the outgoing response message to the client.
         response.setJsonPayload(payload);
 
@@ -136,19 +74,33 @@ service<http> OrderMgtService {
         _ = conn.respond(response);
     }
 
-    @Description {value:"Resource that handles the HTTP POST requests that are directed to the path '/orders' to create a new Order."}
+    @Description {value:"Resource that handles the HTTP POST requests that are directed to the path '/orders'
+    to create a new Order."}
     @http:resourceConfig {
         methods:["POST"],
         path:"/order"
     }
     resource addOrder (http:Connection conn, http:InRequest req) {
+        // Initialize the HTTP response message
+        http:OutResponse response = {};
+        // Extract the order details from the request payload
         json orderReq = req.getJsonPayload();
-        var orderId, _ = (string) orderReq.Order.ID;
+        var orderId, payloadDataError = (string)orderReq.Order.ID;
+
+        if (payloadDataError != null) {
+            // Send the bad request error if the request payload is malformed
+            response.setStringPayload("Error : Please check the input json payload");
+            // Set 400 Bad request status code in the response message
+            response.statusCode = 400;
+            _ = conn.respond(response);
+            return;
+        }
+
+        // Add the order to the map
         ordersMap[orderId] = orderReq;
 
         // Create response message
         json payload = {status:"Order Created.", orderId:orderId};
-        http:OutResponse response = {};
         response.setJsonPayload(payload);
 
         // Set 201 Created status code in the response message
@@ -166,20 +118,16 @@ service<http> OrderMgtService {
         path:"/order/{orderId}"
     }
     resource updateOrder (http:Connection conn, http:InRequest req, string orderId) {
-
+        // Extract the update order details from the request payload
         json updatedOrder = req.getJsonPayload();
-        json existingOrder;
-
         // Find the order that needs to be updated from the map and retrieve it in JSON format.
-        existingOrder, _ = (json)ordersMap[orderId];
+        var existingOrder, _ = (json)ordersMap[orderId];
 
         // Updating existing order with the attributes of the updated order
         if (existingOrder != null) {
             existingOrder.Order.Name = updatedOrder.Order.Name;
             existingOrder.Order.Description = updatedOrder.Order.Description;
             ordersMap[orderId] = existingOrder;
-        } else {
-            existingOrder = "Order : " + orderId + " cannot be found.";
         }
 
         http:OutResponse response = {};
@@ -190,8 +138,8 @@ service<http> OrderMgtService {
         _ = conn.respond(response);
     }
 
-
-    @Description {value:"Resource that handles the HTTP DELETE requests that are directed to the path '/orders/<orderId>' to delete an existing Order."}
+    @Description {value:"Resource that handles the HTTP DELETE requests that are directed to the path 
+    '/orders/<orderId>' to delete an existing Order."}
     @http:resourceConfig {
         methods:["DELETE"],
         path:"/order/{orderId}"
@@ -210,11 +158,10 @@ service<http> OrderMgtService {
     }
 
 }
-
-```
-
-4. With that we've completed the development of OrderMgtService. 
-
+  ```
+  In addition to the order processing logic, we have also manipulated some HTTP status codes and headers whenever required.
+    
+  With that we've completed the development of OrderMgtService. 
 
 
 ## <a name="testing"></a> Testing 
@@ -253,14 +200,7 @@ curl -v -X POST -d '{ "Order": { "ID": "100500", "Name": "XYZ", "Description": "
 
 Output :  
 < HTTP/1.1 201 Created
-< Content-Type: application/json
-< Location: http://localhost:9090/ordermgt/order/100500
-< Transfer-Encoding: chunked
-< Server: wso2-http-transport
-< 
-* Connection #0 to host localhost left intact
-{"status":"Order Created.","orderId":"100500"}[
- 
+{"status":"Order Created.","orderId":"100500"}[ 
 ```
 
 **Retrieve Order** 
@@ -269,9 +209,8 @@ curl "http://localhost:9090/ordermgt/order/100500"
 
 Output : 
 {"Order":{"ID":"100500","Name":"XYZ","Description":"Sample order."}}
-
-
 ```
+
 **Update Order** 
 ```
 curl -X PUT -d '{ "Order": {"Name": "XYZ", "Description": "Updated order."}}' \
@@ -291,7 +230,6 @@ Output:
 
 ### <a name="unit-testing"></a> Writing Unit Tests 
 (Work in progress)
-
 
 
 ## <a name="deploying-the-scenario"></a> Deployment
