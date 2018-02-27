@@ -36,10 +36,10 @@ We can model the OrderMgt RESTful service using services and resources construct
 *  You can decide the package structure for the service and then create the service in the corresponding directory structure. For example, suppose that you are going to use the package name 'guide.restful_service', then you need to create the following directory structure and create the service file using the text editor or IDE that you use. 
 
   ```
-restful-service
-   └── guide
-       └── restful_service
-           └── OrderMgtService.bal  
+  restful-service
+     └── guide
+         └── restful_service
+             └── OrderMgtService.bal  
   ```
   *  For each order management operation, there is a dedicated resource and inside each resource we can implement the order management operation logic. Please refer the following code for the complete implementation of the order management service. 
 
@@ -159,9 +159,9 @@ service<http> OrderMgtService {
 
 }
   ```
-  In addition to the order processing logic, we have also manipulated some HTTP status codes and headers whenever required. 
-   
-*  With that we've completed the development of OrderMgtService. 
+  In addition to the order processing logic, we have also manipulated some HTTP status codes and headers whenever required.
+    
+  With that we've completed the development of OrderMgtService. 
 
 
 ## <a name="testing"></a> Testing 
