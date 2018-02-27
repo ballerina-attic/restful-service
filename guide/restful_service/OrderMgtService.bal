@@ -2,7 +2,6 @@ package guide.restful_service;
 
 import ballerina.net.http;
 
-
 @Description {value:"RESTful service."}
 @http:configuration {basePath:"/ordermgt"}
 service<http> OrderMgtService {
@@ -90,7 +89,6 @@ service<http> OrderMgtService {
         // Send response to the client
         _ = conn.respond(response);
     }
-
 
     @Description {value:"Resource that handles the HTTP DELETE requests that are directed to the path '/orders/<orderId>' to delete an existing Order."}
     @http:resourceConfig {
