@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/pranavan15/restful-service.svg?branch=master)](https://travis-ci.org/pranavan15/restful-service)
+[![Build Status](https://travis-ci.org/ballerina-guides/restful-service.svg?branch=master)](https://travis-ci.org/ballerina-guides/restful-service)
 
 # RESTful Service  
 REST (REpresentational State Transfer) is an architectural style for developing web services. It defines a set of constraints and properties based on HTTP. 
@@ -320,6 +320,7 @@ Once you are done with the development, deploy the service using any of the foll
 
 ### Deploying locally
 
+
 - As the first step, build a Ballerina executable archive (.balx) of the service that we developed above, using the following command. It points to the directory of the service and creates an executable binary out of it. Navigate to `restful-service/guide` and run the following command. 
 ```
    $ ballerina build restful_service
@@ -552,9 +553,9 @@ Follow the steps given below to use tracing with Ballerina.
 ```
 
 ### Metrics
+
 Metrics and alerts are built-in with ballerina. Let's use Prometheus as the monitoring tool.
 Follow the steps given below to set up Prometheus and view the metrics of the Ballerina restful service.
-
 - You can add the following configurations for metrics. Note that these configurations are optional if you already have the basic configuration in the `ballerina.conf` as described under the `Observability` section.
 
 ```ballerina
@@ -682,8 +683,8 @@ ii) Save `filebeat.yml` inside a directory named `{SAMPLE_ROOT}\filebeat`.
 iii) Start the logstash container and replace `{SAMPLE_ROOT}` with your directory name.
      
 ```
-$ docker run -v {SAMPLE_ROOT}/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml \
--v {SAMPLE_ROOT}/guide.restful_service/restful_service/ballerina.log:/usr/share\
+$ docker run -v {SAMPLE_ROOT}/filbeat/filebeat.yml:/usr/share/filebeat/filebeat.yml \
+-v {SAMPLE_ROOT}/guide/restful_service/ballerina.log:/usr/share\
 /filebeat/ballerina.log --link logstash:logstash docker.elastic.co/beats/filebeat:6.2.2
 ```
  
