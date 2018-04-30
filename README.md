@@ -42,6 +42,7 @@ The following figure illustrates all the functionalities of the OrderMgt RESTful
 ### Create the project structure
 
 Ballerina is a complete programming language that supports custom project structures. Use the following package structure for this guide.
+
 ```
 restful-service
  └── guide
@@ -124,6 +125,7 @@ service<http:Service> orderMgt bind listener {
 ```
 
 - You can implement the business logic of each resource as per your requirement. For simplicity, we use an in-memory map to record all the order details. The full source code of the `order_mgt_service` is shown below. In addition to the order processing logic, we control some of the HTTP status codes and headers.  
+
 
 
 ##### order_mgt_service.bal
@@ -254,7 +256,7 @@ $ ballerina run restful_service
 You can test the functionality of the OrderMgt RESTFul service by sending an HTTP request for each order management operation. For example, we use the following cURL commands to test each operation of the `order_mgt_service`. 
 
 **Create Order** 
-```
+```bash
 curl -v -X POST -d \
 '{ "Order": { "ID": "100500", "Name": "XYZ", "Description": "Sample order."}}' \
 "http://localhost:9090/ordermgt/order" -H "Content-Type:application/json"
@@ -270,7 +272,7 @@ Output :
 ```
 
 **Retrieve Order** 
-```
+```bash
 curl "http://localhost:9090/ordermgt/order/100500" 
 
 Output : 
@@ -278,7 +280,7 @@ Output :
 ```
 
 **Update Order** 
-```
+```bash
 curl -X PUT -d '{ "Order": {"Name": "XYZ", "Description": "Updated order."}}' \
 "http://localhost:9090/ordermgt/order/100500" -H "Content-Type:application/json"
 
@@ -287,7 +289,7 @@ Output:
 ```
 
 **Cancel Order** 
-```
+```bash
 curl -X DELETE "http://localhost:9090/ordermgt/order/100500"
 
 Output:
@@ -308,7 +310,7 @@ This guide contains unit test cases for each method available in the 'order_mgt_
 
 To run the unit tests, open your terminal, navigate to `restful-service/guide`, and run the following command.
 ```bash
-$ ballerina test
+   $ ballerina test
 ```
 
 To check the implementation of the test file, see the [order_mgt_service_test.bal](https://github.com/ballerina-guides/restful-service/blob/master/guide/restful_service/tests/order_mgt_service_test.bal).
@@ -371,6 +373,7 @@ service<http:Service> orderMgt bind listener {
 - The `@docker:Config` annotation is used to provide the basic Docker image configurations for the sample. `@docker:Expose {}` is used to expose the port. 
 
 - Now, build a Ballerina executable archive (.balx) of the service, using the following command. It points to the service file that you developed above and creates an executable binary out of it. Further, run the command to create the Docker image using the Docker annotations that you configured above. Navigate to `restful-service/guide` and run the following command.  
+
 ```
    $ ballerina build restful_service
 
@@ -454,7 +457,7 @@ This also creates the corresponding Docker image and the Kubernetes artifacts us
 - The Kubernetes artifacts related to the service are generated in `./target/restful_service/kubernetes`. 
 - Now, you can create the Kubernetes deployment using:
 
-```
+```bash
    $ kubectl apply -f ./target/restful_service/kubernetes 
  
    deployment.extensions "ballerina-guides-restful-service" created
@@ -464,7 +467,7 @@ This also creates the corresponding Docker image and the Kubernetes artifacts us
 
 - Verify that the Kubernetes deployment, service, and ingress are running properly, using the following Kubernetes commands.
 
-```
+```bash
    $ kubectl get service
    $ kubectl get deploy
    $ kubectl get pods
@@ -475,7 +478,7 @@ This also creates the corresponding Docker image and the Kubernetes artifacts us
 
 Node Port:
  
-```
+```bash
    curl -v -X POST -d \
    '{ "Order": { "ID": "100500", "Name": "XYZ", "Description": "Sample order."}}' \
    "http://localhost:<Node_Port>/ordermgt/order" -H "Content-Type:application/json"  
@@ -485,7 +488,7 @@ Ingress:
 
 Add the `/etc/hosts` entry to match the hostname. 
 ``` 
-127.0.0.1 ballerina.guides.io
+   127.0.0.1 ballerina.guides.io
 ```
 
 Access the service. 
@@ -493,6 +496,7 @@ Access the service.
 curl -v -X POST -d \
 '{ "Order": { "ID": "100500", "Name": "XYZ", "Description": "Sample order."}}' \
 "http://ballerina.guides.io/ordermgt/order" -H "Content-Type:application/json" 
+
 ```
 
 ## Observability 
@@ -538,8 +542,8 @@ Follow the steps given below to use tracing with Ballerina.
 
 - Run the Jaeger Docker image using the following command.
 ```bash
-   $ docker run -d -p5775:5775/udp -p6831:6831/udp -p6832:6832/udp -p5778:5778 -p16686:16686 \
-   -p14268:14268 jaegertracing/all-in-one:latest
+   $ docker run -d -p5775:5775/udp -p6831:6831/udp -p6832:6832/udp -p5778:5778 \
+   -p16686:16686 p14268:14268 jaegertracing/all-in-one:latest
 ```
 
 - Navigate to `restful-service/guide` and run the restful-service using the following command. 
