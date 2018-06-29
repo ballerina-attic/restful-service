@@ -55,7 +55,7 @@ map<json> ordersMap;
 service<http:Service> orderMgt bind listener {
 
     // Resource that handles the HTTP GET requests that are directed to a specific
-    // order using path '/orders/<orderID>
+    // order using path '/order/<orderID>
     @http:ResourceConfig {
         methods: ["GET"],
         path: "/order/{orderId}"
@@ -76,7 +76,7 @@ service<http:Service> orderMgt bind listener {
     }
 
     // Resource that handles the HTTP POST requests that are directed to the path
-    // '/orders' to create a new Order.
+    // '/order' to create a new Order.
     @http:ResourceConfig {
         methods: ["POST"],
         path: "/order"
@@ -103,7 +103,7 @@ service<http:Service> orderMgt bind listener {
     }
 
     // Resource that handles the HTTP PUT requests that are directed to the path
-    // '/orders' to update an existing Order.
+    // '/order' to update an existing Order.
     @http:ResourceConfig {
         methods: ["PUT"],
         path: "/order/{orderId}"
@@ -131,7 +131,7 @@ service<http:Service> orderMgt bind listener {
     }
 
     // Resource that handles the HTTP DELETE requests, which are directed to the path
-    // '/orders/<orderId>' to delete an existing Order.
+    // '/order/<orderId>' to delete an existing Order.
     @http:ResourceConfig {
         methods: ["DELETE"],
         path: "/order/{orderId}"
